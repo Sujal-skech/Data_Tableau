@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>E-CarStart | Electric Vehicle Analytics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
+  <style>
+    :root {
+      --green: #00e676;
+      --green-dark: #00b248;
+      --navy: #0a0f1e;
+      --navy2: #111827;
+      --card: #151d2e;
+      --text: #e8eaf0;
+      --muted: #7a8399;
+      --accent: #38bdf8;
+      --orange: #ff6b35;
+      --white: #ffffff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 68px;
+      background: rgba(10,15,30,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(0,230,118,0.12);
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.4rem;
+      color: var(--white);
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none;
+    }
+    .logo span { color: var(--green); }
+    .logo-icon {
+      width: 32px; height: 32px; background: var(--green);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 18px; height: 18px; fill: var(--navy); }
+
+    nav ul { list-style: none; display: flex; gap: 32px; }
+    nav ul a {
+      text-decoration: none; color: var(--muted);
+      font-size: 0.9rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: var(--green); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 24px; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-weight: 600;
+      font-size: 0.9rem; cursor: pointer; text-decoration: none;
+      transition: all 0.2s; border: none;
+    }
+    .btn-primary {
+      background: var(--green); color: var(--navy);
+    }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .btn-outline {
+      background: transparent; color: var(--green);
+      border: 1.5px solid var(--green);
+    }
+    .btn-outline:hover { background: rgba(0,230,118,0.1); }
+
+    /* ── HERO ── */
+    #home {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 100px 5% 60px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse 60% 60% at 70% 50%, rgba(0,230,118,0.07) 0%, transparent 70%),
+                  radial-gradient(ellipse 40% 40% at 20% 80%, rgba(56,189,248,0.06) 0%, transparent 60%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image: linear-gradient(rgba(0,230,118,0.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,230,118,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-content {
+      position: relative; z-index: 1;
+      max-width: 580px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.3);
+      padding: 6px 14px; border-radius: 20px;
+      font-size: 0.8rem; color: var(--green); font-weight: 600;
+      margin-bottom: 24px; letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .hero-badge::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+    }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 800; line-height: 1.1;
+      margin-bottom: 20px; color: var(--white);
+    }
+    h1 em { font-style: normal; color: var(--green); }
+    .hero-sub {
+      font-size: 1.05rem; color: var(--muted);
+      line-height: 1.7; margin-bottom: 36px; max-width: 480px;
+    }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-visual {
+      position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
+      z-index: 1; width: 46%;
+    }
+    .hero-car-card {
+      background: var(--card);
+      border: 1px solid rgba(0,230,118,0.15);
+      border-radius: 20px; padding: 32px;
+      position: relative; overflow: hidden;
+    }
+    .hero-car-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--green), var(--accent));
+    }
+    .car-emoji { font-size: 5rem; display: block; text-align: center; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(0,230,118,0.3)); }
+    .car-stats {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px; margin-top: 20px;
+    }
+    .stat-box {
+      background: rgba(0,230,118,0.06);
+      border: 1px solid rgba(0,230,118,0.1);
+      border-radius: 10px; padding: 12px; text-align: center;
+    }
+    .stat-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem; font-weight: 700; color: var(--green);
+    }
+    .stat-lbl { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── SECTIONS ── */
+    section { padding: 90px 5%; }
+    .section-tag {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--green);
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 800; line-height: 1.2;
+      color: var(--white); margin-bottom: 16px;
+    }
+    h2 span { color: var(--green); }
+    .section-desc {
+      color: var(--muted); max-width: 560px;
+      line-height: 1.7; margin-bottom: 48px;
+    }
+
+    /* ── DASHBOARD SECTION ── */
+    #dashboard { background: var(--navy2); }
+    .tableau-frame-wrap {
+      background: var(--card);
+      border: 1px solid rgba(0,230,118,0.15);
+      border-radius: 16px; overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    }
+    .tableauPlaceholder {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;   /* centers the dashboard */
+    }
+
+    .tableauViz {
+      width: 100% !important;
+      margin: 0 auto;
+      display: block;
+    }
+    .tableau-topbar {
+      background: rgba(0,0,0,0.3);
+      padding: 12px 20px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .tableau-topbar span {
+      margin-left: auto; font-size: 0.78rem; color: var(--muted);
+    }
+    .tableau-embed {
+      width: 100%; height: 600px; border: none; display: block;
+      background: #1a2035;
+    }
+    .embed-placeholder {
+      width: 100%; height: 600px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; background: #1a2035;
+      color: var(--muted);
+    }
+    .embed-placeholder i { font-size: 3rem; color: rgba(0,230,118,0.3); }
+    .embed-placeholder p { font-size: 0.95rem; }
+    .embed-placeholder code {
+      background: rgba(0,230,118,0.08);
+      border: 1px solid rgba(0,230,118,0.2);
+      padding: 4px 10px; border-radius: 6px;
+      font-size: 0.8rem; color: var(--green);
+    }
+
+    /* ── STORY SECTION ── */
+    .story-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .story-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px; overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .story-card:hover {
+      border-color: rgba(0,230,118,0.3);
+      transform: translateY(-4px);
+    }
+    .story-thumb {
+      height: 180px; background: #1a2035;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; position: relative; overflow: hidden;
+    }
+    .story-thumb::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, rgba(21,29,46,0.8));
+    }
+    .story-body { padding: 20px; }
+    .story-body h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem; font-weight: 700; margin-bottom: 8px;
+    }
+    .story-body p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── ABOUT ── */
+    #about {
+      background: linear-gradient(135deg, var(--navy) 0%, #0d1525 100%);
+    }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center;
+    }
+    .feature-list { display: flex; flex-direction: column; gap: 20px; margin-top: 32px; }
+    .feature-item {
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 1.1rem;
+    }
+    .feature-item h4 {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      margin-bottom: 4px; font-size: 0.95rem;
+    }
+    .feature-item p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+    .about-visual {
+      background: var(--card);
+      border: 1px solid rgba(0,230,118,0.1);
+      border-radius: 20px; padding: 36px; text-align: center;
+    }
+    .about-visual .big-num {
+      font-family: 'Syne', sans-serif; font-size: 5rem;
+      font-weight: 800; color: var(--green);
+      line-height: 1;
+    }
+    .about-visual .big-label {
+      color: var(--muted); font-size: 0.9rem; margin-top: 8px;
+    }
+    .stats-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-top: 32px;
+    }
+    .mini-stat {
+      background: rgba(0,230,118,0.05);
+      border: 1px solid rgba(0,230,118,0.08);
+      border-radius: 12px; padding: 16px; text-align: center;
+    }
+    .mini-stat .val {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem; font-weight: 700; color: var(--white);
+    }
+    .mini-stat .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--navy2); }
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: start;
+    }
+    .contact-form {
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label {
+      font-size: 0.82rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .form-group input,
+    .form-group textarea {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px; padding: 12px 16px;
+      color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem; transition: border-color 0.2s;
+      outline: none; resize: vertical;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--green);
+    }
+    .contact-info { display: flex; flex-direction: column; gap: 28px; }
+    .contact-info h3 {
+      font-family: 'Syne', sans-serif; font-size: 1.6rem;
+      font-weight: 700; margin-bottom: 8px;
+    }
+    .contact-info p { color: var(--muted); line-height: 1.7; }
+    .info-item {
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .info-icon {
+      width: 40px; height: 40px; border-radius: 8px;
+      background: rgba(0,230,118,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: var(--green); flex-shrink: 0;
+    }
+    .info-item h5 { font-weight: 600; margin-bottom: 2px; font-size: 0.9rem; }
+    .info-item p { font-size: 0.85rem; color: var(--muted); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: rgba(0,0,0,0.4);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 32px 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    footer p { font-size: 0.82rem; color: var(--muted); }
+    footer .footer-links { display: flex; gap: 24px; }
+    footer .footer-links a {
+      font-size: 0.82rem; color: var(--muted);
+      text-decoration: none; transition: color 0.2s;
+    }
+    footer .footer-links a:hover { color: var(--green); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.7s ease both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.22s; }
+    .delay-3 { animation-delay: 0.34s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero-visual { display: none; }
+      .about-grid, .contact-grid, .story-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      nav ul { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#home" class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+    </div>
+    E-Car<span>Start</span>
+  </a>
+  <ul>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#story">Story</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#dashboard" class="btn btn-primary">Get Started →</a>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge fade-up">⚡ EV Analytics Platform</div>
+    <h1 class="fade-up delay-1">We offer modern <em>Analytics</em> solutions for Electric Vehicles</h1>
+    <p class="hero-sub fade-up delay-2">Explore real-time insights on EV brands, performance metrics, charging infrastructure, and India's growing electric vehicle market — all in one interactive dashboard.</p>
+    <div class="hero-ctas fade-up delay-3">
+      <a href="#dashboard" class="btn btn-primary">View Dashboard →</a>
+      <a href="#about" class="btn btn-outline">Learn More</a>
+    </div>
+  </div>
+  <div class="hero-visual fade-up delay-2">
+    <div class="hero-car-card">
+      <span class="car-emoji">🚗</span>
+      <div style="text-align:center; font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; color:var(--white);">Global EV Performance</div>
+      <div class="car-stats">
+        <div class="stat-box"><div class="stat-val">103</div><div class="stat-lbl">Models</div></div>
+        <div class="stat-box"><div class="stat-val">33+</div><div class="stat-lbl">Brands</div></div>
+        <div class="stat-box"><div class="stat-val">12</div><div class="stat-lbl">India EVs</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard">
+  <div class="section-tag">📊 Analytics Dashboard</div>
+  <h2>Electric Cars <span>Analytics Dashboard</span></h2>
+  <p class="section-desc">Interactive Tableau dashboard embedded directly in the app. Explore brand comparisons, powertrain types, top speeds, and India-specific EV data.</p>
+
+  <div class="tableau-frame-wrap">
+    <div class="tableau-topbar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <span>Electric Cars Analytics Dashboard — Tableau Public</span>
+    </div>
+
+    <div class='tableauPlaceholder' id='viz1773079473477' style='position: relative'>
+      <noscript>
+        <a href='#'>
+          <img alt='Dashboard 1'
+          src='https://public.tableau.com/static/images/Sm/SmartBridgeProject_17730029774370/Dashboard1/1_rss.png'
+          style='border: none' />
+        </a>
+      </noscript>
+
+      <object class='tableauViz' style='display:none;'>
+        <param name='host_url' value='https://public.tableau.com/' />
+        <param name='embed_code_version' value='3' />
+        <param name='site_root' value='' />
+        <param name='name' value='SmartBridgeProject_17730029774370/Dashboard1' />
+        <param name='tabs' value='no' />
+        <param name='toolbar' value='yes' />
+        <param name='static_image'
+        value='https://public.tableau.com/static/images/Sm/SmartBridgeProject_17730029774370/Dashboard1/1.png' />
+        <param name='animate_transition' value='yes' />
+        <param name='display_static_image' value='yes' />
+        <param name='display_spinner' value='yes' />
+        <param name='display_overlay' value='yes' />
+        <param name='display_count' value='yes' />
+        <param name='language' value='en-GB' />
+      </object>
+    </div>
+
+    <script type='text/javascript'>
+      var divElement = document.getElementById('viz1773079473477');
+      var vizElement = divElement.getElementsByTagName('object')[0];
+
+      if (divElement.offsetWidth > 800) {
+        vizElement.style.width='100%';
+        vizElement.style.height='700px';
+      } else if (divElement.offsetWidth > 500) {
+        vizElement.style.width='100%';
+        vizElement.style.height='700px';
+      } else {
+        vizElement.style.width='100%';
+        vizElement.style.height='1200px';
+      }
+
+      var scriptElement = document.createElement('script');
+      scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+      vizElement.parentNode.insertBefore(scriptElement, vizElement);
+    </script>
+   
+  </div>
+</section>
+
+<!-- STORY -->
+<section id="story">
+
+  <div class="section-tag">📖 EV Story</div>
+  <h2>Electric Vehicle <span>Data Story</span></h2>
+  <p class="section-desc">
+    Explore insights about EV growth, performance trends, and India's EV
+    ecosystem through an interactive Tableau story.
+  </p>
+
+  <div class="tableau-frame-wrap">
+
+    <div class="tableau-topbar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <span>EV Data Story — Tableau Public</span>
+    </div>
+
+    <div class='tableauPlaceholder' id='viz1773210050055' style='position: relative'>
+
+      <noscript>
+        <a href='#'>
+          <img alt='Sheet 1'
+          src='https://public.tableau.com/static/images/DB/DB_17729925836490/Sheet1/1_rss.png'
+          style='border:none' />
+        </a>
+      </noscript>
+
+      <object class='tableauViz' style='display:none;'>
+        <param name='host_url' value='https://public.tableau.com/' />
+        <param name='embed_code_version' value='3' />
+        <param name='site_root' value='' />
+        <param name='name' value='DB_17729925836490/Sheet1' />
+        <param name='tabs' value='no' />
+        <param name='toolbar' value='yes' />
+        <param name='static_image'
+        value='https://public.tableau.com/static/images/DB/DB_17729925836490/Sheet1/1.png' />
+        <param name='animate_transition' value='yes' />
+        <param name='display_static_image' value='yes' />
+        <param name='display_spinner' value='yes' />
+        <param name='display_overlay' value='yes' />
+        <param name='display_count' value='yes' />
+        <param name='language' value='en-US' />
+      </object>
+
+    </div>
+
+    <script type='text/javascript'>
+
+      var divElement = document.getElementById('viz1773210050055');
+      var vizElement = divElement.getElementsByTagName('object')[0];
+
+      if (divElement.offsetWidth > 800) {
+        vizElement.style.width='100%';
+        vizElement.style.height='700px';
+      } else if (divElement.offsetWidth > 500) {
+        vizElement.style.width='100%';
+        vizElement.style.height='700px';
+      } else {
+        vizElement.style.width='100%';
+        vizElement.style.height='1200px';
+      }
+
+      var scriptElement = document.createElement('script');
+      scriptElement.src='https://public.tableau.com/javascripts/api/viz_v1.js';
+      vizElement.parentNode.insertBefore(scriptElement, vizElement);
+
+    </script>
+
+  </div>
+
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div>
+      <div class="section-tag">About the Project</div>
+      <h2>Overview of <span>Electric Vehicle</span> Sector</h2>
+      <p class="section-desc">The EV industry is growing at an unprecedented rate. This platform visualizes key datasets to help analysts, students, and enthusiasts understand the landscape.</p>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">⚡</div>
+          <div>
+            <h4>Real EV Performance Data</h4>
+            <p>Top speed, range, efficiency, and fast-charge data for 103 models across 33+ global brands.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🇮🇳</div>
+          <div>
+            <h4>India-Specific Insights</h4>
+            <p>Dedicated analysis of India's EV market including pricing in Lakhs, body styles, and range categories.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📊</div>
+          <div>
+            <h4>Tableau-Powered Visualizations</h4>
+            <p>Interactive dashboards and stories built in Tableau, embedded directly for seamless exploration.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="about-visual">
+        <div class="big-num">103</div>
+        <div class="big-label">Electric Vehicle Models Analyzed</div>
+        <div class="stats-row">
+          <div class="mini-stat"><div class="val">33+</div><div class="lbl">Global Brands</div></div>
+          <div class="mini-stat"><div class="val">12</div><div class="lbl">India EVs</div></div>
+          <div class="mini-stat"><div class="val">180</div><div class="lbl">Charging Stations</div></div>
+          <div class="mini-stat"><div class="val">4</div><div class="lbl">Data Sources</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-tag">📬 Get In Touch</div>
+  <h2>Contact <span>Us</span></h2>
+  <div class="contact-grid">
+    <div class="contact-info">
+      <div>
+        <h3>Have questions about the project?</h3>
+        <p>Whether you're curious about the data, the methodology, or want to collaborate — reach out and we'll get back to you.</p>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">📧</div>
+        <div>
+          <h5>Email</h5>
+          <p>contact@ecarstart.io</p>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">🌐</div>
+        <div>
+          <h5>Tableau Public</h5>
+          <p>public.tableau.com/your-profile</p>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">💻</div>
+        <div>
+          <h5>GitHub</h5>
+          <p>github.com/your-repo</p>
+        </div>
+      </div>
+    </div>
+    <div class="contact-form">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" placeholder="Shashank Daga"/>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="shashank@gmail.com"/>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea rows="5" placeholder="Tell us what you're looking for..."></textarea>
+      </div>
+      <button class="btn btn-primary" style="width:fit-content">Send Message →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#home" class="logo" style="font-size:1.1rem">
+    <div class="logo-icon" style="width:26px;height:26px">
+      <svg viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+    </div>
+    E-Car<span>Start</span>
+  </a>
+  <p>© 2026 E-CarStart · Built with Flask + Tableau</p>
+  <div class="footer-links">
+    <a href="#home">Home</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>
