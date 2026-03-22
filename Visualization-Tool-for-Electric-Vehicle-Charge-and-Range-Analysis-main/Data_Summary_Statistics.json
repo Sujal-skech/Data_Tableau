@@ -1,0 +1,29 @@
+{
+  "ev_database": {
+    "total_vehicles": 180,
+    "avg_range_km": 337.3888888888889,
+    "avg_efficiency": 194.2722222222222,
+    "unique_brands": 37,
+    "avg_battery_capacity": 65.26388888888889
+  },
+  "charging_stations": {
+    "total_stations": 132,
+    "unique_regions": 8,
+    "dc_fast_chargers": 95,
+    "ac_chargers": 37,
+    "avg_power_kw": 48.59848484848485
+  },
+  "clean_ev_data": {
+    "total_vehicles": 103,
+    "avg_range_km": 338.7864077669903,
+    "avg_price_eur": 55811.563106796115,
+    "unique_brands": 33,
+    "awd_vehicles": 41
+  },
+  "india_ev_data": {
+    "total_vehicles": 12,
+    "avg_range_km": 408.6363636363636,
+    "unique_manufacturers": 9,
+    "suv_count": 7
+  }
+}
